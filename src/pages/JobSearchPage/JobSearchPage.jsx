@@ -14,24 +14,59 @@ function JobSearchPage() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchInitialJobs = async () => {
+  // useEffect(() => {
+  //   const fetchInitialJobs = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       const data = await getJobs();
+  //       setJobs(data);
+  //       if (data.length > 0) {
+  //         setSelectedJob(data[0]);
+  //       }
+  //     } catch (error) {
+  //       console.error("Lỗi khi tải dữ liệu công việc:", error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   fetchInitialJobs();
+  // }, []);
+
+    useEffect(() => {
+    // Định nghĩa một hàm async bên trong để có thể dùng await
+    const fetchJobs = async () => {
       try {
-        setIsLoading(true);
-        const data = await getJobs();
+        // Gọi API đến backend FastAPI của bạn
+        const response = await fetch('http://127.0.0.1:8000/api/v1/jobs');
+
+        // Nếu response không thành công (ví dụ: lỗi 404, 500), ném ra một lỗi
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Chuyển đổi response thành dạng JSON
+        const data = await response.json();
+        
+        // Cập nhật state với dữ liệu nhận được
         setJobs(data);
         if (data.length > 0) {
           setSelectedJob(data[0]);
         }
-      } catch (error) {
-        console.error("Lỗi khi tải dữ liệu công việc:", error);
+      } catch (e) {
+        // Nếu có bất kỳ lỗi nào trong quá trình fetch, cập nhật state lỗi
+        console.error("Lỗi khi fetch dữ liệu công việc:", e);
+        setError(e.message);
       } finally {
+        // Dù thành công hay thất bại, cuối cùng cũng dừng trạng thái loading
         setIsLoading(false);
       }
     };
-    fetchInitialJobs();
-  }, []);
 
+    // Gọi hàm fetch dữ liệu
+    fetchJobs();
+
+  }, []); 
+  console.log(jobs)
   const handleJobSelect = (job) => {
     setSelectedJob(job);
   };
@@ -50,6 +85,7 @@ function JobSearchPage() {
         ) : (
           <>
             <JobList
+
               jobs={jobs}
               onJobSelect={handleJobSelect}
               selectedJobId={selectedJob ? selectedJob.id : null}
