@@ -78,6 +78,56 @@ export const getSeniorities = async () => {
   }
 };
 
+/**
+ * Fetches job title suggestions from the API.
+ * @param {string} query - The search query for job titles.
+ * @returns {Promise<Array<string>>} A promise that resolves to an array of job title strings.
+ */
+export const getJobTitleSuggestions = async (query) => {
+  if (!query || query.trim() === "") {
+    return [];
+  }
+  // Backend endpoint này cần được tạo: ví dụ /api/v1/job-title-suggestions
+  const url = `${API_BASE_URL}/job-title-suggestions?query=${encodeURIComponent(query.trim())}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(`HTTP error fetching job title suggestions! status: ${response.status}`);
+      return []; // Trả về mảng rỗng khi có lỗi để UI không bị crash
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error in getJobTitleSuggestions:", error);
+    return []; // Trả về mảng rỗng khi có lỗi
+  }
+};
+
+/**
+ * Fetches location suggestions from the API.
+ * @param {string} query - The search query for locations.
+ * @returns {Promise<Array<string>>} A promise that resolves to an array of location strings.
+ */
+export const getLocationSuggestions = async (query) => {
+  if (!query || query.trim() === "") {
+    return [];
+  }
+  // Backend endpoint này cần được tạo: ví dụ /api/v1/location-suggestions
+  const url = `${API_BASE_URL}/location-suggestions?query=${encodeURIComponent(query.trim())}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(`HTTP error fetching location suggestions! status: ${response.status}`);
+      return [];
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error in getLocationSuggestions:", error);
+    return [];
+  }
+
+};
 
 // Bạn có thể thêm các hàm API khác ở đây, ví dụ:
 // export const getJobById = async (id) => { ... };

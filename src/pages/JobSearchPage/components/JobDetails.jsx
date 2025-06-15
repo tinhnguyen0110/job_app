@@ -12,6 +12,7 @@ function JobDetails({ job }) {
   return (
     <div className="job-details">
       <h2 className="job-detail-title">{job.job_title}</h2>
+      {job.location && <p className="job-detail-location">Địa điểm: {job.location}</p>}
       {job.date_posted && <p>Ngày đăng: {job.date_posted}</p>}
       <button className="apply-button">Ứng tuyển ngay</button>
 
@@ -41,7 +42,6 @@ function JobDetails({ job }) {
           {job.benefits}
         </ul>
       </div>
-
     </div>
   );
 }
