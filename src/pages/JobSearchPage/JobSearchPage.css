@@ -1,10 +1,100 @@
 /* src/pages/JobSearchPage/JobSearchPage.css */
-
+body {
+  margin: 0;
+  padding: 0;
+}
 .page-container {
-  max-width: 1200px;
+  /* max-width: 1200px; */
+  padding: 0;
   margin: 0 auto;
 }
 
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: linear-gradient(to right, #006934, #005d3b, #004d27);
+  color: white;
+}
+.site-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+.header-left,
+.header-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.header-left {
+  justify-content: flex-start;
+}
+
+.header-right {
+  justify-content: flex-end;
+}
+
+.header-center {
+  flex: 2;
+  text-align: center;
+}
+
+.site-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.site-subtitle {
+  font-size: 1.1rem;
+  margin: 0.5rem 0 0;
+  opacity: 0.9;
+}
+
+.notification-btn,
+.login-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.5);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.notification-btn:hover,
+.login-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: white;
+}
+
+.notification-btn i,
+.login-btn i {
+  font-size: 1.1rem;
+}
+
+.main-content {
+  padding-top: 1rem;
+}
 .search-bar {
   display: flex;
   padding: 1rem;

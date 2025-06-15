@@ -111,7 +111,29 @@ function JobSearchPage() {
 
   return (
     <div className="page-container">
-      <SearchBar onSearch={handleSearch} />
+      <div className="sticky-header">
+        <div className="site-header">
+          <div className="header-left">
+            <button className="notification-btn">
+              <i className="fas fa-bell"></i>
+              Thông báo việc làm
+            </button>
+          </div>
+          
+          <div className="header-center">
+            <h1 className="site-title">Joblytics.com</h1>
+            <p className="site-subtitle">Tìm kiếm công việc mơ ước của bạn</p>
+          </div>
+
+          <div className="header-right">
+            <button className="login-btn">
+              <i className="fas fa-user"></i>
+              Đăng nhập
+            </button>
+          </div>
+        </div>
+        <SearchBar onSearch={handleSearch} />
+      </div>
       <main className="main-content">
         {isLoading ? (
           <div className="loading-spinner">Loading...</div>
