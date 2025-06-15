@@ -36,8 +36,10 @@ function JobSearchPage() {
     // Định nghĩa một hàm async bên trong để có thể dùng await
     const fetchJobs = async () => {
       try {
+        
         // Gọi API đến backend FastAPI của bạn
-        const response = await fetch('http://127.0.0.1:8000/api/v1/jobs');
+        const URL = "http://localhost:8000/api/v1/jobs"
+        const response = await fetch(URL);
 
         // Nếu response không thành công (ví dụ: lỗi 404, 500), ném ra một lỗi
         if (!response.ok) {
