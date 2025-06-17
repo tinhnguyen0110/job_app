@@ -13,11 +13,17 @@
   --shadow-medium: 0 4px 12px rgba(0,0,0,0.1);
   --border-radius: 8px;
   --transition: all 0.2s ease;
+  
+  color-scheme: light;
 }
 
 /* Reset & Base */
 * {
   box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
 }
 
 body {
@@ -26,6 +32,13 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   line-height: 1.6;
   color: var(--text-color);
+}
+
+input, select, button, textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  color-scheme: light;
 }
 
 .page-container {
@@ -752,30 +765,7 @@ body {
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text-color: #e9ecef;
-    --text-secondary-color: #adb5bd;
-    --border-color: #495057;
-    --white-color: #212529;
-    --bg-light: #343a40;
-  }
-  
-  .site-header {
-    background: linear-gradient(135deg, #004d27, #006934);
-  }
-  
-  .job-list-item.selected {
-    background: linear-gradient(135deg, #212529, #2d4233);
-  }
-  
-  .job-tags span {
-    background: linear-gradient(135deg, #495057, #6c757d);
-    color: #adb5bd;
-    border-color: #495057;
-  }
-}
+
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
