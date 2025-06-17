@@ -13,9 +13,9 @@ function SearchBar({ onSearch }) {
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
   const searchContainerRef = useRef(null);
-  const searchTermInputRef = useRef(null); // Ref cho input tên công việc
-  const locationInputRef = useRef(null); // Ref cho input địa điểm
-  const justClickedSuggestionRef = useRef(false); // Cờ để đánh dấu vừa click gợi ý
+  const searchTermInputRef = useRef(null);
+  const locationInputRef = useRef(null);
+  const justClickedSuggestionRef = useRef(false);
 
 
   useEffect(() => {
@@ -33,8 +33,8 @@ function SearchBar({ onSearch }) {
 
   useEffect(() => {
     if (justClickedSuggestionRef.current) {
-      justClickedSuggestionRef.current = false; // Reset cờ
-      return; // Bỏ qua fetch nếu vừa click gợi ý
+      justClickedSuggestionRef.current = false;
+      return;
     }
 
     if (searchTerm.trim() === "") {
@@ -53,7 +53,7 @@ function SearchBar({ onSearch }) {
         setJobTitleSuggestions([]);
         setShowJobTitleSuggestions(false);
       }
-    }, 300); // Debounce 300ms
+    }, 300); 
 
     return () => {
       clearTimeout(timerId);
@@ -62,8 +62,7 @@ function SearchBar({ onSearch }) {
 
   useEffect(() => {
     if (justClickedSuggestionRef.current) {
-      // Không cần reset cờ ở đây nữa vì nó sẽ được reset bởi useEffect của searchTerm nếu cần
-      return; // Bỏ qua fetch nếu vừa click gợi ý
+          return;
     }
 
     if (location.trim() === "") {
@@ -82,7 +81,7 @@ function SearchBar({ onSearch }) {
         setLocationSuggestions([]);
         setShowLocationSuggestions(false);
       }
-    }, 300); // Debounce 300ms
+    }, 300); 
 
     return () => clearTimeout(timerId);
   }, [location]);
@@ -90,7 +89,7 @@ function SearchBar({ onSearch }) {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
-        setShowJobTitleSuggestions(false); // Sửa lỗi: setShowSuggestions -> setShowJobTitleSuggestions
+        setShowJobTitleSuggestions(false);
         setShowLocationSuggestions(false);
       }
     };
@@ -115,19 +114,19 @@ function SearchBar({ onSearch }) {
   };
 
   const handleJobTitleSuggestionClick = (suggestion) => {
-    justClickedSuggestionRef.current = true; // Đặt cờ
+    justClickedSuggestionRef.current = true;
     setSearchTerm(suggestion);
     setJobTitleSuggestions([]);
     setShowJobTitleSuggestions(false);
-    searchTermInputRef.current?.blur(); // Mất focus sau khi chọn
+    searchTermInputRef.current?.blur(); 
   };
 
   const handleLocationSuggestionClick = (suggestion) => {
-    justClickedSuggestionRef.current = true; // Đặt cờ
+    justClickedSuggestionRef.current = true;
     setLocation(suggestion);
     setLocationSuggestions([]);
     setShowLocationSuggestions(false);
-    locationInputRef.current?.blur(); // Mất focus sau khi chọn
+    locationInputRef.current?.blur(); 
   };
 
   return (
@@ -135,7 +134,7 @@ function SearchBar({ onSearch }) {
       <div className="search-input-container">
         <input
           type="text"
-          ref={searchTermInputRef} // Gán ref
+          ref={searchTermInputRef} 
           placeholder="Tên công việc, vị trí bạn muốn ứng tuyển..."
           value={searchTerm}
           onChange={handleSearchTermChange}
@@ -154,7 +153,7 @@ function SearchBar({ onSearch }) {
       <div className="search-input-container">
         <input
           type="text"
-          ref={locationInputRef} // Gán ref
+          ref={locationInputRef} 
           placeholder="Địa điểm"
           value={location}
           onChange={handleLocationChange}

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { getJobs } from '../../api/jobService';
+import { isMobileBreakpoint } from '../../utils/deviceUtils';
 
 import JobList from './components/JobList';
 import JobDetails from './components/JobDetails';
@@ -15,6 +16,10 @@ function JobSearchPage() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showJobDetail, setShowJobDetail] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchParams, setSearchParams] = useState({ searchTerm: '', location: '', seniority: '' });
+  const [isMobile, setIsMobile] = useState(isMobileBreakpoint());
   const itemsPerPage = 5;
 
   // Calculate pagination values
@@ -25,12 +30,11 @@ function JobSearchPage() {
 
   const loadInitialJobs = async () => {
     setIsLoading(true);
+    setIsSearching(false);
+    setSearchParams({ searchTerm: '', location: '', seniority: '' });
     try {
-      // Giả sử getJobs() không có tham số sẽ tải tất cả công việc
-      // hoặc một tập hợp mặc định.
-      // getJobs chịu trách nhiệm về URL đầy đủ và logic fetch.
       const data = await getJobs();
-      setJobs(data || []); // Đảm bảo jobs luôn là một mảng
+      setJobs(data || []);
       if (data && data.length > 0) {
         setSelectedJob(data[0]);
       } else {
@@ -38,7 +42,7 @@ function JobSearchPage() {
       }
     } catch (error) {
       console.error("Error fetching initial jobs:", error);
-      setJobs([]); // Đặt thành mảng rỗng khi có lỗi
+      setJobs([]);
       setSelectedJob(null);
     } finally {
       setIsLoading(false);
@@ -47,21 +51,45 @@ function JobSearchPage() {
 
   useEffect(() => {
     loadInitialJobs();
-  }, []); // Mảng phụ thuộc rỗng nghĩa là chỉ chạy một lần khi mount
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const newIsMobile = isMobileBreakpoint();
+      setIsMobile(newIsMobile);
+      
+      if (!newIsMobile && showJobDetail) {
+        setShowJobDetail(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [showJobDetail, selectedJob, jobs.length]);
 
   const handleJobSelect = (job) => {
     setSelectedJob(job);
+    if (isMobile) {
+      setShowJobDetail(true);
+    }
+  };
+
+  const handleBackToList = () => {
+    setShowJobDetail(false);
+    setSelectedJob(null);
   };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    // Cập nhật công việc được chọn thành công việc đầu tiên trên trang mới
     const newIndexOfFirstJob = (pageNumber - 1) * itemsPerPage;
     const firstJobOnPage = jobs[newIndexOfFirstJob];
     if (firstJobOnPage) {
       setSelectedJob(firstJobOnPage);
     } else {
-      setSelectedJob(null); // Nếu không có công việc nào trên trang đó, đặt selectedJob thành null
+      setSelectedJob(null);
     }
     window.scrollTo(0, 0);
   };
@@ -71,18 +99,26 @@ function JobSearchPage() {
     const trimmedSeniority = seniority;
     const trimmedLocation = location.trim();
 
-    if (trimmedSearchTerm === "" && trimmedLocation === "") {
-      // Nếu cả hai trường tìm kiếm đều trống, tải lại danh sách công việc ban đầu
+    if (isMobile && showJobDetail) {
+      setShowJobDetail(false);
+    }
+
+    if (trimmedSearchTerm === "" && trimmedLocation === "" && trimmedSeniority === "") {
       loadInitialJobs();
     } else {
-      // Ngược lại, thực hiện tìm kiếm
       const performSearch = async () => {
         setIsLoading(true);
-        setCurrentPage(1); // Đặt lại về trang đầu tiên cho kết quả tìm kiếm mới
+        setCurrentPage(1);
+        setIsSearching(true);
+        setSearchParams({ 
+          searchTerm: trimmedSearchTerm, 
+          location: trimmedLocation, 
+          seniority: trimmedSeniority 
+        });
         try {
           const params = {};
           if (trimmedSearchTerm !== "") {
-            params.searchTerm = trimmedSearchTerm; // Hoặc 'search', 'title' tùy thuộc vào API backend
+            params.searchTerm = trimmedSearchTerm;
           }
           if (trimmedLocation !== "") {
             params.location = trimmedLocation;
@@ -90,16 +126,16 @@ function JobSearchPage() {
           if (trimmedSeniority !== "") {
             params.seniority = trimmedSeniority;
           }
-          const data = await getJobs(params); // Gọi getJobs với các tham số tìm kiếm
-          setJobs(data || []); // Đảm bảo jobs luôn là một mảng
+          const data = await getJobs(params);
+          setJobs(data || []);
           if (data && data.length > 0) {
             setSelectedJob(data[0]);
           } else {
-            setSelectedJob(null); // Không tìm thấy kết quả
+            setSelectedJob(null);
           }
         } catch (error) {
           console.error("Error searching jobs:", error);
-          setJobs([]); // Xóa jobs khi có lỗi
+          setJobs([]);
           setSelectedJob(null);
         } finally {
           setIsLoading(false);
@@ -107,6 +143,26 @@ function JobSearchPage() {
       };
       performSearch();
     }
+  };
+
+
+  const EmptyJobList = () => {
+    const hasSearchTerms = isSearching && (searchParams.searchTerm || searchParams.location || searchParams.seniority);
+    
+    return (
+      <div className="empty-job-list">
+        <div className="empty-content">
+          <i className={hasSearchTerms ? "fas fa-search" : "fas fa-briefcase"}></i>
+          <h3>{hasSearchTerms ? "Không tìm thấy công việc phù hợp" : "Chưa có công việc nào"}</h3>
+          <p>
+            {hasSearchTerms 
+              ? `Không tìm thấy công việc phù hợp với từ khóa "${searchParams.searchTerm || searchParams.location || searchParams.seniority}". Hãy thử tìm kiếm với từ khóa khác.`
+              : "Hiện tại chưa có công việc nào được đăng tuyển. Vui lòng quay lại sau."
+            }
+          </p>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -137,21 +193,35 @@ function JobSearchPage() {
       <main className="main-content">
         {isLoading ? (
           <div className="loading-spinner">Loading...</div>
+        ) : jobs.length === 0 ? (
+          <EmptyJobList />
         ) : (
           <>
-            <div className="job-list-container">
-              <JobList
-                jobs={currentJobs}
-                onJobSelect={handleJobSelect}
-                selectedJobId={selectedJob?.id}
-              />
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </div>
-            <JobDetails job={selectedJob} />
+
+            {isMobile && showJobDetail ? (
+              <div className="mobile-job-detail">
+                <button className="back-to-list-btn" onClick={handleBackToList}>
+                  <i className="fas fa-arrow-left"></i>
+                  Quay lại danh sách
+                </button>
+                <JobDetails job={selectedJob} />
+              </div>
+            ) : (
+              <div className="job-list-container">
+                <JobList
+                  jobs={currentJobs}
+                  onJobSelect={handleJobSelect}
+                  selectedJobId={selectedJob?.id}
+                />
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
+            )}
+
+            {!isMobile && <JobDetails job={selectedJob} />}
           </>
         )}
       </main>

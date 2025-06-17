@@ -5,7 +5,7 @@
 // Hàm này giả lập việc gọi API để lấy danh sách công việc
 // src/api/jobService.js
 
-const API_BASE_URL = "/api/v1"; // Hoặc URL API của bạn
+const API_BASE_URL = "http://joblytics.io.vn/api/v1"; // Hoặc URL API của bạn
 
 /**
  * Fetches jobs from the API.
@@ -23,10 +23,10 @@ export const getJobs = async (params) => {
     if (params.searchTerm) {
       // Đảm bảo tên tham số 'searchTerm' khớp với những gì backend mong đợi
       // Ví dụ: có thể là 'q', 'title', 'search', v.v.
-      queryParams.append('searchTerm', params.searchTerm);
+      queryParams.append("searchTerm", params.searchTerm);
     }
     if (params.location) {
-      queryParams.append('location', params.location);
+      queryParams.append("location", params.location);
     }
     url += `?${queryParams.toString()}`;
   }
@@ -44,7 +44,11 @@ export const getJobs = async (params) => {
         // Không có body JSON hoặc không parse được
         errorData = { message: response.statusText };
       }
-      throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || response.statusText}`);
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${
+          errorData.message || response.statusText
+        }`
+      );
     }
     const data = await response.json();
     return data;
@@ -88,11 +92,15 @@ export const getJobTitleSuggestions = async (query) => {
     return [];
   }
   // Backend endpoint này cần được tạo: ví dụ /api/v1/job-title-suggestions
-  const url = `${API_BASE_URL}/job-title-suggestions?query=${encodeURIComponent(query.trim())}`;
+  const url = `${API_BASE_URL}/job-title-suggestions?query=${encodeURIComponent(
+    query.trim()
+  )}`;
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      console.error(`HTTP error fetching job title suggestions! status: ${response.status}`);
+      console.error(
+        `HTTP error fetching job title suggestions! status: ${response.status}`
+      );
       return []; // Trả về mảng rỗng khi có lỗi để UI không bị crash
     }
     const data = await response.json();
@@ -113,11 +121,15 @@ export const getLocationSuggestions = async (query) => {
     return [];
   }
   // Backend endpoint này cần được tạo: ví dụ /api/v1/location-suggestions
-  const url = `${API_BASE_URL}/location-suggestions?query=${encodeURIComponent(query.trim())}`;
+  const url = `${API_BASE_URL}/location-suggestions?query=${encodeURIComponent(
+    query.trim()
+  )}`;
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      console.error(`HTTP error fetching location suggestions! status: ${response.status}`);
+      console.error(
+        `HTTP error fetching location suggestions! status: ${response.status}`
+      );
       return [];
     }
     const data = await response.json();
@@ -126,7 +138,6 @@ export const getLocationSuggestions = async (query) => {
     console.error("Error in getLocationSuggestions:", error);
     return [];
   }
-
 };
 
 // Bạn có thể thêm các hàm API khác ở đây, ví dụ:
