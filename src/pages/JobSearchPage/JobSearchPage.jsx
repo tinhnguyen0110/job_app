@@ -121,7 +121,7 @@ function JobSearchPage() {
           </div>
           
           <div className="header-center">
-            <h1 className="site-title">Joblytics.com</h1>
+            <h1 className="site-title">Joblytics.io.vn</h1>
             <p className="site-subtitle">Tìm kiếm công việc mơ ước của bạn</p>
           </div>
 

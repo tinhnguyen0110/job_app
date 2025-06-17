@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../../assets/styles/Pagination.css'; // Adjust the path as necessary
+import '../../../assets/styles/pagination.css'; // Adjust the path as necessary
 
 function Pagination({ currentPage, totalPages, onPageChange }) {
   const getVisiblePageNumbers = () => {
