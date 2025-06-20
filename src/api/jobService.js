@@ -4,8 +4,8 @@
 
 // Hàm này giả lập việc gọi API để lấy danh sách công việc
 // src/api/jobService.js
-
-const API_BASE_URL = "http://joblytics.io.vn/api/v1"; // Hoặc URL API của bạn
+const API_BASE_URL = "/api/v1"; 
+// const API_BASE_URL = "http://joblytics.io.vn/api/v1"; // Hoặc URL API của bạn
 
 /**
  * Fetches jobs from the API.
